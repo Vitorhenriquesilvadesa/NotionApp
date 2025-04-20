@@ -37,7 +37,6 @@ class _TextNodeState extends State<TextNode> {
     if (keyEvent is KeyDownEvent) {
       if (HardwareKeyboard.instance.isShiftPressed &&
           keyEvent.logicalKey == LogicalKeyboardKey.enter) {
-        // Remove o último \n se tiver sido adicionado
         final text = widget.controller.text;
         final selection = widget.controller.selection;
 
@@ -53,7 +52,6 @@ class _TextNodeState extends State<TextNode> {
           );
         }
 
-        // Chama a função desejada
         widget.onAddBelow();
       }
 
