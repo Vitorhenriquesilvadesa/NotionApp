@@ -39,7 +39,7 @@ class HotCommandsMenu extends StatelessWidget {
                   vertical: 10,
                 ),
                 child: Text(
-                  '$command',
+                  command,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),

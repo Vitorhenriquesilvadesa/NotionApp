@@ -56,7 +56,10 @@ class _PageTitleState extends State<PageTitle> {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: _hovering ? Colors.white.withAlpha(30) : Colors.transparent,
+          color:
+              _hovering
+                  ? Colors.white.withAlpha(30)
+                  : Colors.white.withAlpha(10),
         ),
         child: KeyboardListener(
           focusNode: _focusNode,
@@ -70,7 +73,7 @@ class _PageTitleState extends State<PageTitle> {
               cursorRadius: Radius.circular(20),
               textAlign: TextAlign.left,
               decoration: const InputDecoration.collapsed(hintText: ''),
-              style: AppTextStyles.styles[ElementType.title],
+              style: AppTextStyles.styles[ElementTag.title],
               cursorColor: AppColorsDark.defaultText,
             ),
           ),

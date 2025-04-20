@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-enum ElementType { h1, h2, h3, h4, h5, h6, normal, title }
+enum ElementTag { h1, h2, h3, h4, h5, h6, normal, title }
 
 class AppTextStyles {
-  static const Map<ElementType, TextStyle> styles = {
-    ElementType.h1: h1,
-    ElementType.h2: h2,
-    ElementType.h3: h3,
-    ElementType.h4: h4,
-    ElementType.h5: h5,
-    ElementType.h6: h6,
-    ElementType.normal: normal,
-    ElementType.title: pageTitle,
+  static const Map<ElementTag, TextStyle> styles = {
+    ElementTag.h1: h1,
+    ElementTag.h2: h2,
+    ElementTag.h3: h3,
+    ElementTag.h4: h4,
+    ElementTag.h5: h5,
+    ElementTag.h6: h6,
+    ElementTag.normal: normal,
+    ElementTag.title: pageTitle,
   };
 
   static const pageTitle = TextStyle(

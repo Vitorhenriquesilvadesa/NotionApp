@@ -12,17 +12,21 @@ class TextNode extends StatefulWidget {
     required this.onAddBelow,
     required this.onAddAbove,
     required this.onRemove,
+    required this.onDownPress,
+    required this.onUpPress,
     this.onSubmitted,
     this.isDragging = false,
   });
 
   final int index;
-  final ElementType elementType;
+  final ElementTag elementType;
   final void Function(String)? onSubmitted;
   final FocusNode focusNode;
   final VoidCallback onAddAbove;
   final VoidCallback onAddBelow;
   final VoidCallback onRemove;
+  final VoidCallback onDownPress;
+  final VoidCallback onUpPress;
   final TextEditingController controller;
   final bool isDragging;
 
@@ -35,11 +39,11 @@ class _TextNodeState extends State<TextNode> {
 
   void _onKeyPressed(KeyEvent keyEvent) {
     if (keyEvent is KeyDownEvent) {
+      final text = widget.controller.text;
+      final selection = widget.controller.selection;
+
       if (HardwareKeyboard.instance.isShiftPressed &&
           keyEvent.logicalKey == LogicalKeyboardKey.enter) {
-        final text = widget.controller.text;
-        final selection = widget.controller.selection;
-
         if (selection.start > 0 && text[selection.start - 1] == '\n') {
           final newText = text.replaceRange(
             selection.start - 1,
@@ -56,11 +60,43 @@ class _TextNodeState extends State<TextNode> {
       }
 
       if (keyEvent.logicalKey == LogicalKeyboardKey.backspace) {
-        if (widget.controller.value.text.isEmpty) {
+        if (text.isEmpty) {
           widget.onRemove();
         }
       }
+
+      if (keyEvent.logicalKey == LogicalKeyboardKey.arrowDown) {
+        if (_isCursorOnLastLine()) {
+          debugPrint("Downing");
+          widget.onDownPress();
+        }
+      }
+
+      if (keyEvent.logicalKey == LogicalKeyboardKey.arrowUp) {
+        if (_isCursorOnFirstLine()) {
+          widget.onUpPress();
+        }
+      }
     }
+  }
+
+  bool _isCursorOnFirstLine() {
+    var controller = widget.controller;
+    var text = controller.text;
+    var cursorPos = controller.selection.base.offset;
+    String textAfterCursor = text.substring(cursorPos);
+    var lineCount = text.split('\n').length;
+    var afterCursorLineCount = textAfterCursor.split('\n').length;
+    return afterCursorLineCount == lineCount;
+  }
+
+  bool _isCursorOnLastLine() {
+    var controller = widget.controller;
+    var text = controller.text;
+    var cursorPos = controller.selection.base.offset;
+    String textAfterCursor = text.substring(cursorPos);
+    var afterCursorLineCount = textAfterCursor.split('\n').length;
+    return afterCursorLineCount == 1;
   }
 
   @override

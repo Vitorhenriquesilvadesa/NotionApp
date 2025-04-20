@@ -2,7 +2,7 @@ import 'package:brill_app/core/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class NoteElement {
-  final ElementType type;
+  final ElementTag type;
   final FocusNode focusNode;
   final TextEditingController controller;
 
