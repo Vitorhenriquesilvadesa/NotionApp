@@ -1,4 +1,3 @@
-import 'package:brill_app/features/editor/model/note_element.dart';
 import 'package:brill_app/features/editor/utils/keyboard_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,12 +5,12 @@ import 'package:flutter/services.dart';
 abstract class TextCompositeNode extends StatefulWidget {
   const TextCompositeNode({
     required super.key,
-    required this.element,
     required this.focusNode,
+    required this.index,
   });
 
-  final TextNoteElement element;
   final FocusNode focusNode;
+  final int index;
 
   @override
   TextCompositeNodeState createState();

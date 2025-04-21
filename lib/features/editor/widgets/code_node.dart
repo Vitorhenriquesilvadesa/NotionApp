@@ -1,0 +1,174 @@
+import 'package:brill_app/core/styles/text_styles.dart';
+import 'package:brill_app/features/editor/utils/code_lexer.dart';
+import 'package:brill_app/features/editor/utils/keyboard_util.dart';
+import 'package:brill_app/features/editor/utils/languages.dart';
+import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
+import 'package:brill_app/features/editor/widgets/option_selector.dart';
+import 'package:flutter/material.dart';
+
+enum CodeMode { editing, highlighting }
+
+class CodeCompositeNode extends TextCompositeNode {
+  const CodeCompositeNode({
+    required this.controller,
+    required super.key,
+    required super.focusNode,
+    required super.index,
+  });
+
+  final TextEditingController controller;
+
+  @override
+  TextCompositeNodeState<TextCompositeNode> createState() => CodeNodeState();
+}
+
+class CodeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
+  CodeMode mode = CodeMode.editing;
+  String language = "python";
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.all(10),
+          color: Colors.white.withAlpha(50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  OptionSelector<String>(
+                    maxMenuHeight: 300,
+                    options: [
+                      for (var l in languages) Option(label: l, value: l),
+                    ],
+                    defaultValue: "python",
+                    icon: Icons.code_sharp,
+                    onSelect: (option) {
+                      setState(() {
+                        language = option;
+                      });
+                    },
+                  ),
+                  Text(language, style: AppTextStyles.codeField),
+                ],
+              ),
+              OptionSelector<CodeMode>(
+                options: [
+                  Option(
+                    label: "Editar Código",
+                    value: CodeMode.editing,
+                    icon: Icons.edit_document,
+                  ),
+                  Option(
+                    label: "Visualizar Sintaxe",
+                    value: CodeMode.highlighting,
+                    icon: Icons.highlight,
+                  ),
+                ],
+                defaultValue: CodeMode.editing,
+                icon: Icons.edit_document,
+                onSelect: onModeSelect,
+              ),
+            ],
+          ),
+        ),
+        Container(
+          color: Colors.black,
+          width: double.infinity,
+          padding: EdgeInsets.all(10),
+          child:
+              mode == CodeMode.editing
+                  ? TextField(
+                    textAlignVertical: TextAlignVertical.top,
+                    controller: widget.controller,
+                    focusNode: widget.focusNode,
+                    maxLines: null,
+                    style: AppTextStyles.codeField,
+                    textAlign: TextAlign.justify,
+                    decoration: const InputDecoration.collapsed(hintText: ''),
+                    cursorColor: Theme.of(context).colorScheme.primary,
+                  )
+                  : buildHighlight(),
+        ),
+      ],
+    );
+  }
+
+  void onModeSelect(CodeMode mode) {
+    setState(() {
+      this.mode = mode;
+    });
+  }
+
+  Widget buildHighlight() {
+    PythonScanner scanner = PythonScanner("${widget.controller.text}\n");
+    final tokens = scanner.scanTokens();
+
+    List<Widget> lines = [];
+    List<Widget> line = [];
+
+    int currentLine = 1;
+
+    for (var token in tokens) {
+      if (token.type != TokenType.newLine) {
+        if (token.type == TokenType.space || token.type == TokenType.eof) {
+          line.add(Text(" ", style: CodeHighlightStyles.eof));
+        } else {
+          if (token.type == TokenType.identifier) {
+            line.add(
+              Text(
+                token.lexeme,
+                style:
+                    _isLowercase(token.lexeme[0])
+                        ? CodeHighlightStyles.identifier
+                        : CodeHighlightStyles.type,
+              ),
+            );
+          } else {
+            line.add(
+              Text(
+                token.lexeme,
+                style: CodeHighlightStyles.tokenStyles[token.type],
+              ),
+            );
+          }
+        }
+      } else {
+        line.insert(0, SizedBox(width: 20));
+        line.insert(
+          0,
+          SizedBox(
+            child: Text(currentLine.toString(), style: CodeHighlightStyles.eof),
+          ),
+        );
+
+        currentLine++;
+        lines.add(Row(children: line));
+        line = [];
+      }
+    }
+
+    if (line.isNotEmpty) {
+      lines.add(Row(children: line));
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: lines,
+      ),
+    );
+  }
+
+  bool _isLowercase(String c) =>
+      (c.compareTo('a') >= 0 && c.compareTo('z') <= 0) || c == '_';
+
+  @override
+  Map<KeyCombination, VoidCallback> get keyHandlers => {};
+}

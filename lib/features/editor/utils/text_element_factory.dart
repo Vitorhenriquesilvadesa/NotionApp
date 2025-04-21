@@ -1,29 +1,41 @@
 import 'package:brill_app/features/editor/model/note_element.dart';
+import 'package:brill_app/features/editor/utils/text_composite_node_builder.dart';
 import 'package:brill_app/features/editor/utils/text_element_visitor.dart';
 import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
 
-class TextElementFactory extends TextElementVisitor<TextElement> {
+class TextCompositeNodeFactory extends NoteElementVisitor<TextCompositeNode> {
+  TextCompositeNodeBuilder builder = TextCompositeNodeBuilder();
+
   @override
-  TextElement visitCode(CodeNoteElement element) {
-    // TODO: implement visitCode
-    throw UnimplementedError();
+  TextCompositeNode accept(NoteElement value) {
+    return value.accept(this);
   }
 
   @override
-  TextElement visitImage(ImageNoteElement element) {
+  TextCompositeNode visitCode(CodeNoteElement element) {
+    return builder
+        .buildWith<CodeNodeBuilder>()
+        .withConfiguration(element)
+        .build();
+  }
+
+  @override
+  TextCompositeNode visitImage(ImageNoteElement element) {
     // TODO: implement visitImage
     throw UnimplementedError();
   }
 
   @override
-  TextElement visitList(ListNoteElement element) {
+  TextCompositeNode visitList(ListNoteElement element) {
     // TODO: implement visitList
     throw UnimplementedError();
   }
 
   @override
-  TextElement visitText(TextNoteElement element) {
-    // TODO: implement visitText
-    throw UnimplementedError();
+  TextCompositeNode visitText(ParagraphNoteElement element) {
+    return builder
+        .buildWith<ParagraphNodeBuilder>()
+        .withConfiguration(element)
+        .build();
   }
 }

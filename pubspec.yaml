@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   flutter_math_fork: ^0.7.2
   get: ^4.7.2
+  percent_indicator: ^4.2.5
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +28,6 @@ flutter:
         - asset: assets/fonts/Roboto-Regular.ttf
         - asset: assets/fonts/Roboto-Bold.ttf
         - asset: assets/fonts/Roboto-Italic.ttf
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf

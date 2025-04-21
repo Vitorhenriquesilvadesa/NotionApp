@@ -14,6 +14,8 @@ class OptionSelector<T> extends StatefulWidget {
   final T defaultValue;
   final IconData icon;
   final String? tooltip;
+  final void Function(T option) onSelect;
+  final double? maxMenuHeight;
 
   const OptionSelector({
     super.key,
@@ -21,13 +23,15 @@ class OptionSelector<T> extends StatefulWidget {
     required this.defaultValue,
     required this.icon,
     this.tooltip,
+    this.maxMenuHeight,
+    required this.onSelect,
   });
 
   @override
-  State<OptionSelector> createState() => _OptionSelectorState();
+  State<OptionSelector<T>> createState() => _OptionSelectorState<T>();
 }
 
-class _OptionSelectorState<T> extends State<OptionSelector> {
+class _OptionSelectorState<T> extends State<OptionSelector<T>> {
   late T _selectedOption;
 
   @override
@@ -39,7 +43,11 @@ class _OptionSelectorState<T> extends State<OptionSelector> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<T>(
-      offset: Offset(0, 60),
+      offset: const Offset(0, 60),
+      constraints:
+          widget.maxMenuHeight != null
+              ? BoxConstraints(maxHeight: widget.maxMenuHeight!)
+              : null,
       popUpAnimationStyle: AnimationStyle(
         curve: Curves.decelerate,
         duration: Durations.medium1,
@@ -47,12 +55,14 @@ class _OptionSelectorState<T> extends State<OptionSelector> {
         reverseDuration: Durations.medium1,
       ),
       tooltip: widget.tooltip,
-      icon: Icon(widget.icon),
+      icon: Row(
+        children: [Icon(widget.icon), const Icon(Icons.arrow_drop_down)],
+      ),
       initialValue: _selectedOption,
       onSelected: (T value) {
         setState(() {
           _selectedOption = value;
-          debugPrint("Selected: $value");
+          widget.onSelect(value);
         });
       },
       itemBuilder:
@@ -63,7 +73,7 @@ class _OptionSelectorState<T> extends State<OptionSelector> {
                 child: Row(
                   children: [
                     if (option.icon != null) Icon(option.icon),
-                    if (option.icon != null) SizedBox(width: 10),
+                    if (option.icon != null) const SizedBox(width: 10),
                     Text(option.label, style: AppTextStyles.normal),
                   ],
                 ),
