@@ -1,84 +1,48 @@
 import 'package:brill_app/core/styles/text_styles.dart';
+import 'package:brill_app/features/editor/utils/keyboard_util.dart';
+import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class TextNode extends StatefulWidget {
+class TextNode extends TextCompositeNode {
   const TextNode({
     required super.key,
-    required this.index,
-    required this.elementType,
+    required super.element,
+    required super.focusNode,
     required this.controller,
-    required this.focusNode,
     required this.onAddBelow,
     required this.onAddAbove,
     required this.onRemove,
     required this.onDownPress,
     required this.onUpPress,
+    required this.tag,
     this.onSubmitted,
     this.isDragging = false,
   });
 
-  final int index;
-  final ElementTag elementType;
   final void Function(String)? onSubmitted;
-  final FocusNode focusNode;
   final VoidCallback onAddAbove;
   final VoidCallback onAddBelow;
   final VoidCallback onRemove;
-  final VoidCallback onDownPress;
-  final VoidCallback onUpPress;
+  final void Function(int) onDownPress;
+  final void Function(int) onUpPress;
   final TextEditingController controller;
+  final ElementTag tag;
   final bool isDragging;
 
   @override
-  State<TextNode> createState() => _TextNodeState();
+  TextCompositeNodeState<TextCompositeNode> createState() => _TextNodeState();
 }
 
-class _TextNodeState extends State<TextNode> {
-  bool _hovering = false;
-
-  void _onKeyPressed(KeyEvent keyEvent) {
-    if (keyEvent is KeyDownEvent) {
-      final text = widget.controller.text;
-      final selection = widget.controller.selection;
-
-      if (HardwareKeyboard.instance.isShiftPressed &&
-          keyEvent.logicalKey == LogicalKeyboardKey.enter) {
-        if (selection.start > 0 && text[selection.start - 1] == '\n') {
-          final newText = text.replaceRange(
-            selection.start - 1,
-            selection.start,
-            '',
-          );
-          widget.controller.value = TextEditingValue(
-            text: newText,
-            selection: TextSelection.collapsed(offset: selection.start - 1),
-          );
-        }
-
-        widget.onAddBelow();
-      }
-
-      if (keyEvent.logicalKey == LogicalKeyboardKey.backspace) {
-        if (text.isEmpty) {
-          widget.onRemove();
-        }
-      }
-
-      if (keyEvent.logicalKey == LogicalKeyboardKey.arrowDown) {
-        if (_isCursorOnLastLine()) {
-          debugPrint("Downing");
-          widget.onDownPress();
-        }
-      }
-
-      if (keyEvent.logicalKey == LogicalKeyboardKey.arrowUp) {
-        if (_isCursorOnFirstLine()) {
-          widget.onUpPress();
-        }
-      }
-    }
-  }
+class _TextNodeState extends TextCompositeNodeState<TextNode> {
+  @override
+  Map<KeyCombination, VoidCallback> get keyHandlers => {
+    KeyCombination(LogicalKeyboardKey.arrowUp): onUpPress,
+    KeyCombination(LogicalKeyboardKey.arrowDown): onDownPress,
+    KeyCombination(LogicalKeyboardKey.backspace): onDelete,
+    KeyCombination(LogicalKeyboardKey.enter, {AppModifierKey.shiftModifier}):
+        onShiftEnterPress,
+  };
 
   bool _isCursorOnFirstLine() {
     var controller = widget.controller;
@@ -101,59 +65,54 @@ class _TextNodeState extends State<TextNode> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardListener(
-      onKeyEvent: _onKeyPressed,
-      focusNode: FocusNode(),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() => _hovering = true),
-        onExit: (_) => setState(() => _hovering = false),
-        child: AnimatedSize(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color:
-                  _hovering ? Colors.white.withAlpha(30) : Colors.transparent,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: TextField(
-                    textAlignVertical: TextAlignVertical.top,
-                    controller: widget.controller,
-                    focusNode: widget.focusNode,
-                    onSubmitted: widget.onSubmitted,
-                    maxLines: null,
-                    style: AppTextStyles.styles[widget.elementType],
-                    textAlign: TextAlign.justify,
-                    decoration: const InputDecoration.collapsed(hintText: ''),
-                    cursorColor: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 150),
-                  opacity: _hovering ? 1.0 : 0.25,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: ReorderableDragStartListener(
-                      index: widget.index,
-                      child: const Icon(
-                        Icons.drag_indicator_outlined,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+    return TextField(
+      textAlignVertical: TextAlignVertical.top,
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      onSubmitted: widget.onSubmitted,
+      maxLines: null,
+      style: AppTextStyles.styles[widget.tag],
+      textAlign: TextAlign.justify,
+      decoration: const InputDecoration.collapsed(hintText: ''),
+      cursorColor: Theme.of(context).colorScheme.primary,
     );
+  }
+
+  void onDownPress() {
+    if (_isCursorOnLastLine()) {
+      widget.onDownPress(widget.element.index);
+    }
+  }
+
+  void onUpPress() {
+    if (_isCursorOnFirstLine()) {
+      widget.onUpPress(widget.element.index);
+    }
+  }
+
+  void onDelete() {
+    final text = widget.controller.text;
+    if (text.isEmpty) {
+      widget.onRemove();
+    }
+  }
+
+  void onShiftEnterPress() {
+    final text = widget.controller.text;
+    final selection = widget.controller.selection;
+
+    if (selection.start > 0 && text[selection.start - 1] == '\n') {
+      final newText = text.replaceRange(
+        selection.start - 1,
+        selection.start,
+        '',
+      );
+      widget.controller.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: selection.start - 1),
+      );
+    }
+
+    widget.onAddBelow();
   }
 }

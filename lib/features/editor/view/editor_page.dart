@@ -12,6 +12,7 @@ import 'package:brill_app/features/editor/model/note_element.dart';
 import 'package:brill_app/features/editor/model/text_alignment.dart';
 import 'package:brill_app/features/editor/widgets/option_selector.dart';
 import 'package:brill_app/features/editor/widgets/page_title.dart';
+import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
 import 'package:brill_app/features/editor/widgets/text_node.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,6 +26,7 @@ class NoteEditorPage extends StatefulWidget {
 
 class _NoteEditorPageState extends State<NoteEditorPage> {
   EditorController controller = Get.find();
+  final List<GlobalKey<TextCompositeNodeState<TextCompositeNode>>> keys = [];
 
   @override
   void initState() {
@@ -60,6 +62,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                         child: PageTitle(
                           onSubmitted: (p0) {
                             setState(() {
+                              keys.add(GlobalKey());
                               controller.onPageTitleInsert(p0);
                             });
                           },
@@ -77,7 +80,9 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                             setState(() {
                               if (newIndex > oldIndex) newIndex--;
                               final item = controller.removeByIndex(oldIndex);
-                              controller.insert(newIndex, item);
+                              controller.insertElementAt(newIndex, item);
+                              final key = keys.removeAt(oldIndex);
+                              keys.insert(newIndex, key);
                             });
                           },
                           onReorderStart: (_) {},
@@ -91,50 +96,57 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                               }
                             });
                             return Padding(
-                              key: ValueKey(element),
+                              key: ValueKey(index),
                               padding: const EdgeInsets.only(bottom: 10),
-                              child: TextNode(
+                              child: TextElement(
                                 index: index,
-                                elementType: element.type,
-                                focusNode: focusNode,
-                                controller: element.controller,
-                                onAddAbove: () {
-                                  setState(() {
-                                    controller.insertElementAt(index);
-                                  });
-                                },
+                                childKey: keys[index],
+                                childBuilder: () {
+                                  return TextNode(
+                                    key: keys[index],
+                                    element: element as TextNoteElement,
+                                    focusNode: focusNode,
+                                    tag: ElementTag.h5,
+                                    controller: element.controller,
+                                    onAddAbove: () {
+                                      setState(() {
+                                        keys.insert(index, GlobalKey());
+                                        controller.insertAt(index);
+                                      });
+                                    },
 
-                                onAddBelow: () {
-                                  setState(() {
-                                    controller.insertElementAt(index + 1);
-                                  });
-                                },
+                                    onAddBelow: () {
+                                      setState(() {
+                                        keys.insert(index + 1, GlobalKey());
+                                        controller.insertAt(index + 1);
+                                      });
+                                    },
 
-                                onRemove: () {
-                                  if (controller.elementCount > 1) {
-                                    setState(() {
-                                      controller.removeElementAt(index);
-                                    });
-                                  }
-                                },
+                                    onRemove: () {
+                                      if (controller.elementCount > 1) {
+                                        setState(() {
+                                          controller.removeElementAt(index);
+                                        });
+                                      }
+                                    },
 
-                                onDownPress: () {
-                                  if (controller.elementCount > 1) {
-                                    setState(() {
-                                      controller.swapTo(index + 1);
-                                    });
-                                  }
-                                },
+                                    onDownPress: (index) {
+                                      if (index + 1 < controller.elementCount) {
+                                        setState(() {
+                                          controller.swapTo(index + 1);
+                                        });
+                                      }
+                                    },
 
-                                onUpPress: () {
-                                  if (controller.elementCount > 1) {
-                                    setState(() {
-                                      controller.swapTo(index - 1);
-                                    });
-                                  }
+                                    onUpPress: (index) {
+                                      if (controller.elementCount > 1) {
+                                        setState(() {
+                                          controller.swapTo(index - 1);
+                                        });
+                                      }
+                                    },
+                                  );
                                 },
-
-                                key: ValueKey(element),
                               ),
                             );
                           },
