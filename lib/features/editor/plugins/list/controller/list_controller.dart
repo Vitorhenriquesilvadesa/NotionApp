@@ -1,3 +1,4 @@
+import 'package:brill_app/features/editor/model/note_element.dart';
 import 'package:brill_app/features/editor/plugins/list/model/list_note_element.dart';
 import 'package:brill_app/features/editor/plugins/list/model/list_type.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,16 @@ class ListController extends GetxController {
   Rx<ListType> type = ListType.dots.obs;
 
   int get elementCount => elements.length;
+
+  void insertElement(int index, ListItem element) {
+    elements.insert(index, element);
+  }
+
+  void reorderElement(int oldIndex, int newIndex) {
+    final element = elements.removeAt(oldIndex);
+    if (newIndex > oldIndex) newIndex--;
+    elements.insert(newIndex, element);
+  }
 
   void setListType(ListType type) {
     if (type == this.type.value) return;

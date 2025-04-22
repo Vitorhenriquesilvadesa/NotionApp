@@ -79,7 +79,7 @@ class ListCompositeNodeState extends TextCompositeNodeState<ListCompositeNode> {
                   );
                 },
                 itemCount: listController.elementCount,
-                onReorder: (oldIndex, newIndex) {},
+                onReorder: listController.reorderElement,
               );
             }),
           ),

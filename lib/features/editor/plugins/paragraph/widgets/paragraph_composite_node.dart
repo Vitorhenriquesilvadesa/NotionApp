@@ -77,7 +77,7 @@ class ParagraphCompositeNodeState
   Widget _buildToolbar() {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(0),
       color: Colors.white.withAlpha(50),
       width: double.infinity,
       child: Row(
