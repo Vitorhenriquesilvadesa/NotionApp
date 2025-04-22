@@ -1,8 +1,8 @@
 import 'package:brill_app/core/styles/text_styles.dart';
-import 'package:brill_app/features/editor/controller/paragraph_controller.dart';
-import 'package:brill_app/features/editor/model/paragraph_note_element.dart';
+import 'package:brill_app/features/editor/plugins/paragraph/controller/paragraph_controller.dart';
+import 'package:brill_app/features/editor/plugins/paragraph/model/paragraph_note_element.dart';
 import 'package:brill_app/features/editor/utils/keyboard_util.dart';
-import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
+import 'package:brill_app/features/editor/plugins/shared/abstract_text_node.dart';
 import 'package:brill_app/features/editor/widgets/option_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

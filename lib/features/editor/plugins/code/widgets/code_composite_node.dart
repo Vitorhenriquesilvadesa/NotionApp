@@ -1,10 +1,10 @@
 import 'package:brill_app/core/styles/text_styles.dart';
-import 'package:brill_app/features/editor/controller/code_controller.dart';
-import 'package:brill_app/features/editor/model/code_note_element.dart';
+import 'package:brill_app/features/editor/plugins/code/controller/code_controller.dart';
+import 'package:brill_app/features/editor/plugins/code/model/code_note_element.dart';
 import 'package:brill_app/features/editor/utils/code_lexer.dart';
 import 'package:brill_app/features/editor/utils/keyboard_util.dart';
 import 'package:brill_app/features/editor/utils/languages.dart';
-import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
+import 'package:brill_app/features/editor/plugins/shared/abstract_text_node.dart';
 import 'package:brill_app/features/editor/widgets/option_selector.dart';
 import 'package:flutter/material.dart';
 

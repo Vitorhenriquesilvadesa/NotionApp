@@ -1,4 +1,4 @@
-import 'package:brill_app/features/editor/widgets/code_composite_node.dart';
+import 'package:brill_app/features/editor/plugins/code/widgets/code_composite_node.dart';
 import 'package:flutter/material.dart';
 
 class CodeController extends ChangeNotifier {

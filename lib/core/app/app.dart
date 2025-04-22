@@ -1,6 +1,6 @@
 import 'package:brill_app/core/theme/dark.dart';
 import 'package:brill_app/core/theme/light.dart';
-import 'package:brill_app/features/editor/view/editor_page.dart';
+import 'package:brill_app/features/editor/view/editor/editor_page.dart';
 import 'package:flutter/material.dart';
 
 class BrillApp extends StatelessWidget {

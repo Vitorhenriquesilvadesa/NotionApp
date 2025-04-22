@@ -1,26 +1,23 @@
 import 'package:brill_app/features/editor/model/note_element.dart';
-import 'package:brill_app/features/editor/plugins/block_type.dart';
-import 'package:brill_app/features/editor/plugins/plugin_registry.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
-class EditorController extends ChangeNotifier {
-  final List<NoteElement> elements = [];
+class EditorController extends GetxController {
+  final RxString pageTitle = ''.obs;
+  final RxList<NoteElement> elements = <NoteElement>[].obs;
+
+  void onPageTitleInsert(String title) {
+    pageTitle.value = title;
+  }
 
   int get elementCount => elements.length;
 
   void insertElement(int index, NoteElement element) {
     elements.insert(index, element);
-    notifyListeners();
   }
 
-  void onPageTitleInsert(String title) {
-    final paragraphPlugin = NoteElementPluginRegistry().get(
-      BlockType.paragraph,
-    );
-
-    if (elements.isEmpty) {
-      var element = paragraphPlugin?.createElement();
-      elements.add(element!);
-    }
+  void reorderElement(int oldIndex, int newIndex) {
+    final element = elements.removeAt(oldIndex);
+    if (newIndex > oldIndex) newIndex--;
+    elements.insert(newIndex, element);
   }
 }

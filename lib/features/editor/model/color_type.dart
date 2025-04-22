@@ -1,1 +1,0 @@
-enum ColorType { background, foreground }

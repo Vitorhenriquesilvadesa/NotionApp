@@ -1,5 +1,5 @@
-import 'package:brill_app/features/editor/plugins/block_type.dart';
-import 'block_plugin.dart';
+import 'package:brill_app/features/editor/plugins/shared/block_type.dart';
+import 'note_element_plugin.dart';
 
 class NoteElementPluginRegistry {
   static final NoteElementPluginRegistry _instance =

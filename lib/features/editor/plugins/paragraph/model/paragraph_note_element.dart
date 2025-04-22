@@ -1,6 +1,6 @@
 import 'package:brill_app/core/styles/text_styles.dart';
 import 'package:brill_app/features/editor/model/note_element.dart';
-import 'package:brill_app/features/editor/plugins/block_type.dart';
+import 'package:brill_app/features/editor/plugins/shared/block_type.dart';
 import 'package:flutter/material.dart';
 
 class ParagraphNoteElement extends NoteElement {

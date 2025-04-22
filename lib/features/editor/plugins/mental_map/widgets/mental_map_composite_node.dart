@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:brill_app/features/editor/model/mental_map_note_element.dart';
+import 'package:brill_app/features/editor/plugins/mental_map/model/mental_map_note_element.dart';
 import 'package:brill_app/features/editor/utils/keyboard_util.dart';
-import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
+import 'package:brill_app/features/editor/plugins/shared/abstract_text_node.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
