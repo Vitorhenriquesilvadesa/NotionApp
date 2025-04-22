@@ -1,4 +1,6 @@
 import 'package:brill_app/core/styles/text_styles.dart';
+import 'package:brill_app/features/editor/controller/code_controller.dart';
+import 'package:brill_app/features/editor/model/code_note_element.dart';
 import 'package:brill_app/features/editor/utils/code_lexer.dart';
 import 'package:brill_app/features/editor/utils/keyboard_util.dart';
 import 'package:brill_app/features/editor/utils/languages.dart';
@@ -8,23 +10,31 @@ import 'package:flutter/material.dart';
 
 enum CodeMode { editing, highlighting }
 
-class CodeCompositeNode extends TextCompositeNode {
-  const CodeCompositeNode({
-    required this.controller,
-    required super.key,
-    required super.focusNode,
-    required super.index,
-  });
-
-  final TextEditingController controller;
+class CodeCompositeNode extends TextCompositeNode<CodeNoteElement> {
+  const CodeCompositeNode({super.key, required super.element});
 
   @override
-  TextCompositeNodeState<TextCompositeNode> createState() => CodeNodeState();
+  TextCompositeNodeState<TextCompositeNode> createState() =>
+      CodeCompositeNodeState();
 }
 
-class CodeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
-  CodeMode mode = CodeMode.editing;
-  String language = "python";
+class CodeCompositeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
+  late final CodeController codeController;
+  late final TextEditingController textEditingController;
+
+  @override
+  void initState() {
+    super.initState();
+    textEditingController = TextEditingController();
+    textEditingController.text = widget.element.source;
+
+    codeController = CodeController(
+      textEditingController: textEditingController,
+      language: widget.element.language,
+    );
+
+    codeController.addListener(onValueChanged);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +56,11 @@ class CodeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
                     options: [
                       for (var l in languages) Option(label: l, value: l),
                     ],
-                    defaultValue: "python",
+                    defaultValue: widget.element.language,
                     icon: Icons.code_sharp,
-                    onSelect: (option) {
-                      setState(() {
-                        language = option;
-                      });
-                    },
+                    onSelect: onLanguageSelect,
                   ),
-                  Text(language, style: AppTextStyles.codeField),
+                  Text(codeController.language, style: AppTextStyles.codeField),
                 ],
               ),
               OptionSelector<CodeMode>(
@@ -82,12 +88,14 @@ class CodeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
           width: double.infinity,
           padding: EdgeInsets.all(10),
           child:
-              mode == CodeMode.editing
+              codeController.mode == CodeMode.editing
                   ? TextField(
                     textAlignVertical: TextAlignVertical.top,
-                    controller: widget.controller,
-                    focusNode: widget.focusNode,
                     maxLines: null,
+                    onChanged: (value) {
+                      widget.element.source = value;
+                    },
+                    controller: codeController.textEditingController,
                     style: AppTextStyles.codeField,
                     textAlign: TextAlign.justify,
                     decoration: const InputDecoration.collapsed(hintText: ''),
@@ -100,13 +108,11 @@ class CodeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
   }
 
   void onModeSelect(CodeMode mode) {
-    setState(() {
-      this.mode = mode;
-    });
+    codeController.setMode(mode);
   }
 
   Widget buildHighlight() {
-    PythonScanner scanner = PythonScanner("${widget.controller.text}\n");
+    PythonScanner scanner = PythonScanner("${textEditingController.text}\n");
     final tokens = scanner.scanTokens();
 
     List<Widget> lines = [];
@@ -171,4 +177,12 @@ class CodeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
 
   @override
   Map<KeyCombination, VoidCallback> get keyHandlers => {};
+
+  void onLanguageSelect(String language) {
+    codeController.setLanguage(language);
+  }
+
+  void onValueChanged() {
+    setState(() {});
+  }
 }

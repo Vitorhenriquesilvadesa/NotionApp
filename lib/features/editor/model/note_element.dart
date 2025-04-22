@@ -1,113 +1,56 @@
-import 'package:brill_app/core/styles/text_styles.dart';
-import 'package:brill_app/features/editor/utils/text_element_visitor.dart';
-import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
-import 'package:flutter/material.dart';
-
-enum ElementType { paragraph, list, code, image, heading, quote }
+import 'package:brill_app/features/editor/plugins/block_type.dart';
 
 abstract class NoteElement {
-  final ElementType type;
-  FocusNode focusNode;
-  GlobalKey<TextCompositeNodeState<TextCompositeNode>> key;
-  int index;
+  final BlockType type;
 
-  NoteElement({
-    required this.key,
-    required this.index,
-    required this.type,
-    required this.focusNode,
-  });
+  NoteElement({required this.type});
 
-  T accept<T>(NoteElementVisitor<T> visitor);
+  Map<String, dynamic> toJson();
 
   @override
-  String toString() {
-    return "Element { $type, $key }";
-  }
+  String toString();
 }
 
-class ParagraphNoteElement extends NoteElement {
-  final TextEditingController controller;
-  TextAlign alignment;
-  ElementTag tag;
-  Color color;
+// class ListNoteElement extends NoteElement {
+//   final List<ListItem> items;
 
-  ParagraphNoteElement({
-    required super.focusNode,
-    required super.index,
-    required super.key,
-    required this.color,
-    required this.controller,
-    this.tag = ElementTag.h5,
-    this.alignment = TextAlign.left,
-  }) : super(type: ElementType.paragraph);
+//   ListNoteElement({required super.type, required this.items});
 
-  @override
-  T accept<T>(NoteElementVisitor<T> visitor) {
-    return visitor.visitText(this);
-  }
+//   @override
+//   T accept<T>(NoteElementVisitor<T> visitor) {
+//     return visitor.visitList(this);
+//   }
+// }
 
-  @override
-  String toString() {
-    return "Paragraph { $type, , $controller, $key }";
-  }
-}
+// abstract class ListItem {
+//   final TextEditingController controller;
 
-class ListNoteElement extends NoteElement {
-  final List<ListItem> items;
+//   ListItem({required this.controller});
+// }
 
-  ListNoteElement({
-    required super.index,
-    required super.type,
-    required super.focusNode,
-    required this.items,
-    required super.key,
-  });
+// class BulletedListItem extends ListItem {
+//   BulletedListItem({required super.controller});
+// }
 
-  @override
-  T accept<T>(NoteElementVisitor<T> visitor) {
-    return visitor.visitList(this);
-  }
-}
+// class EnumeratedListItem extends ListItem {
+//   int index;
 
-class ListItem {
-  final TextEditingController controller;
-  bool checked;
+//   EnumeratedListItem({required this.index, required super.controller});
+// }
 
-  ListItem({required this.controller, this.checked = false});
-}
+// class TodoListItem extends ListItem {
+//   bool done;
 
-class CodeNoteElement extends NoteElement {
-  final TextEditingController controller;
-  final String language;
+//   TodoListItem({required this.done, required super.controller});
+// }
 
-  CodeNoteElement({
-    required super.index,
-    required super.focusNode,
-    required super.key,
-    required this.controller,
-    this.language = 'java',
-  }) : super(type: ElementType.code);
+// class ImageNoteElement extends NoteElement {
+//   final String imageUrl;
 
-  @override
-  T accept<T>(NoteElementVisitor<T> visitor) {
-    return visitor.visitCode(this);
-  }
-}
+//   ImageNoteElement({required super.type, required this.imageUrl});
 
-class ImageNoteElement extends NoteElement {
-  final String imageUrl;
-
-  ImageNoteElement({
-    required super.index,
-    required super.type,
-    required super.focusNode,
-    required this.imageUrl,
-    required super.key,
-  });
-
-  @override
-  T accept<T>(NoteElementVisitor<T> visitor) {
-    return visitor.visitImage(this);
-  }
-}
+//   @override
+//   T accept<T>(NoteElementVisitor<T> visitor) {
+//     return visitor.visitImage(this);
+//   }
+// }

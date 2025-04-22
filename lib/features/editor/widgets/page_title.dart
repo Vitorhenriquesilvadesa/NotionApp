@@ -59,7 +59,7 @@ class _PageTitleState extends State<PageTitle> {
           color:
               _hovering
                   ? Colors.white.withAlpha(30)
-                  : Colors.white.withAlpha(10),
+                  : Colors.white.withAlpha(0),
         ),
         child: KeyboardListener(
           focusNode: _focusNode,
@@ -72,7 +72,12 @@ class _PageTitleState extends State<PageTitle> {
               cursorWidth: 3,
               cursorRadius: Radius.circular(20),
               textAlign: TextAlign.left,
-              decoration: const InputDecoration.collapsed(hintText: ''),
+              decoration: InputDecoration.collapsed(
+                hintText: 'Seu Título',
+                hintStyle: AppTextStyles.styles[ElementTag.title]!.copyWith(
+                  color: Colors.white.withAlpha(20),
+                ),
+              ),
               style: AppTextStyles.styles[ElementTag.title],
               cursorColor: AppColorsDark.defaultText,
             ),

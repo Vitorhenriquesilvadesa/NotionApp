@@ -2,18 +2,15 @@ import 'package:brill_app/core/metrics/sizes.dart';
 import 'package:brill_app/core/styles/text_styles.dart';
 import 'package:brill_app/core/theme/colors.dart';
 import 'package:brill_app/features/editor/controller/editor_controller.dart';
-import 'package:brill_app/features/editor/controller/node_creation_controller.dart';
 import 'package:brill_app/features/editor/model/action_type.dart';
-import 'package:brill_app/features/editor/model/block_type.dart';
-import 'package:brill_app/features/editor/model/element_text_style.dart';
+import 'package:brill_app/features/editor/plugins/block_type.dart';
 import 'package:brill_app/features/editor/model/list_type.dart';
-import 'package:brill_app/features/editor/model/note_element.dart';
-import 'package:brill_app/features/editor/model/text_alignment.dart';
+import 'package:brill_app/features/editor/plugins/plugin_registry.dart';
+import 'package:brill_app/features/editor/utils/note_element_factory.dart';
 import 'package:brill_app/features/editor/widgets/option_selector.dart';
 import 'package:brill_app/features/editor/widgets/page_title.dart';
 import 'package:brill_app/features/editor/widgets/abstract_text_node.dart';
 import 'package:brill_app/features/editor/widgets/pomodoro.dart';
-import 'package:brill_app/features/editor/widgets/text_node.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,11 +23,11 @@ class NoteEditorPage extends StatefulWidget {
 
 class _NoteEditorPageState extends State<NoteEditorPage> {
   EditorController controller = Get.find();
-  NodeCreationController nodeCreationController = Get.find();
 
   @override
   void initState() {
     super.initState();
+    controller.addListener(onValueChanged);
   }
 
   @override
@@ -76,42 +73,27 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: controller.elementCount,
                           itemBuilder: (context, index) {
-                            final element = controller.getByIndex(index);
-                            final focusNode = element.focusNode;
-                            focusNode.addListener(() {
-                              if (focusNode.hasFocus) {
-                                controller.index = index;
-                              }
-                            });
+                            final element = controller.elements[index];
+
                             return Padding(
                               key: ValueKey(element),
                               padding: const EdgeInsets.only(bottom: 10),
                               child: TextElement(
                                 index: index,
-                                childKey: element.key,
                                 childBuilder: () {
-                                  return nodeCreationController.createNode(
-                                    element,
-                                  );
+                                  return CompositeNodeFactory.create(element);
                                 },
                               ),
                             );
                           },
                           onReorder: (int oldIndex, int newIndex) {
                             setState(() {
-                              final element = controller.removeByIndex(
+                              final element = controller.elements.removeAt(
                                 oldIndex,
                               );
-                              element.key = GlobalKey();
-
-                              int index = 0;
-                              for (var element in controller.elements) {
-                                element.index = index;
-                                index++;
-                              }
 
                               if (newIndex > oldIndex) newIndex--;
-                              controller.insertElementAt(newIndex, element);
+                              controller.elements.insert(newIndex, element);
                             });
                           },
                         ),
@@ -128,10 +110,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             children: [
               SizedBox(
                 width: AppSizes.leftMenuWidth,
-                child: Container(
-                  color: AppColorsDark.menuBackground,
-                  child: PomodoroTimer(duration: Duration(seconds: 60)),
-                ),
+                child: Container(color: AppColorsDark.menuBackground),
               ),
               Column(
                 children: [
@@ -155,75 +134,6 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                     child: Row(
                       children: [
                         SizedBox(width: 50),
-                        OptionSelector<TextAlignment>(
-                          icon: Icons.format_align_left,
-                          tooltip: "Alinhamento do texto",
-                          defaultValue: TextAlignment.left,
-                          onSelect: (option) {},
-                          options: [
-                            Option(
-                              icon: Icons.format_align_left,
-                              label: "Alinhar à esquerda",
-                              value: TextAlignment.left,
-                            ),
-                            Option(
-                              icon: Icons.format_align_right,
-                              label: "Alinhar à direita",
-                              value: TextAlignment.right,
-                            ),
-                            Option(
-                              icon: Icons.format_align_center,
-                              label: "Centralizar",
-                              value: TextAlignment.center,
-                            ),
-                            Option(
-                              icon: Icons.format_align_justify,
-                              label: "Justificar",
-                              value: TextAlignment.justify,
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 20),
-
-                        OptionSelector<ElementTextStyle>(
-                          icon: Icons.text_fields,
-                          tooltip: "Estilo do texto",
-                          defaultValue: ElementTextStyle.normal,
-                          onSelect: onTextStyleSelect,
-                          options: [
-                            Option(
-                              icon: Icons.text_fields,
-                              label: "Normal",
-                              value: ElementTextStyle.normal,
-                            ),
-                            Option(
-                              icon: Icons.title,
-                              label: "Título 1",
-                              value: ElementTextStyle.title1,
-                            ),
-                            Option(
-                              icon: Icons.subtitles,
-                              label: "Título 2",
-                              value: ElementTextStyle.title2,
-                            ),
-                            Option(
-                              icon: Icons.code,
-                              label: "Código",
-                              value: ElementTextStyle.code,
-                            ),
-                            Option(
-                              icon: Icons.format_quote,
-                              label: "Citação",
-                              value: ElementTextStyle.citation,
-                            ),
-                            Option(
-                              icon: Icons.terminal,
-                              label: "Monoespaçado",
-                              value: ElementTextStyle.monospace,
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 20),
 
                         OptionSelector<ListType>(
                           icon: Icons.format_list_bulleted,
@@ -250,26 +160,6 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                         ),
                         SizedBox(width: 20),
 
-                        OptionSelector<Color>(
-                          icon: Icons.format_color_text,
-                          tooltip: "Cor do texto",
-                          defaultValue: Colors.white,
-                          onSelect: onColorSelect,
-                          options: [
-                            Option(label: "Branco", value: Colors.white),
-                            Option(label: "Preto", value: Colors.black),
-                            Option(label: "Vermelho", value: Colors.red),
-                            Option(label: "Verde", value: Colors.green),
-                            Option(label: "Azul", value: Colors.blue),
-                            Option(label: "Amarelo", value: Colors.yellow),
-                            Option(label: "Laranja", value: Colors.orange),
-                            Option(label: "Rosa", value: Colors.pink),
-                            Option(label: "Roxo", value: Colors.purple),
-                            Option(label: "Cinza", value: Colors.grey),
-                          ],
-                        ),
-                        SizedBox(width: 20),
-
                         OptionSelector<BlockType>(
                           icon: Icons.notes,
                           tooltip: "Inserir bloco",
@@ -280,6 +170,11 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                               icon: Icons.notes,
                               label: "Parágrafo",
                               value: BlockType.paragraph,
+                            ),
+                            Option(
+                              icon: Icons.notes,
+                              label: "Mapa Mental",
+                              value: BlockType.mentalMap,
                             ),
                             Option(
                               icon: Icons.table_chart,
@@ -332,59 +227,20 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     );
   }
 
-  void onNodeInsert(BlockType option) {
-    final GlobalKey<TextCompositeNodeState<TextCompositeNode>> key =
-        GlobalKey();
+  void onNodeInsert(BlockType type) {
+    final plugin = NoteElementPluginRegistry().get(type);
+    final element = plugin?.createElement();
 
-    switch (option) {
-      case BlockType.paragraph:
-        setState(() {
-          NoteElement element = ParagraphNoteElement(
-            color: Colors.white,
-            controller: TextEditingController(),
-            focusNode: FocusNode(),
-            key: key,
-            index: controller.editingIndex,
-            alignment: TextAlign.left,
-            tag: ElementTag.h5,
-          );
-          controller.insertElementAt(controller.elementCount, element);
-        });
-        break;
-      case BlockType.table:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-      case BlockType.separator:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-      case BlockType.code:
-        setState(() {
-          CodeNoteElement element = CodeNoteElement(
-            controller: TextEditingController(),
-            focusNode: FocusNode(),
-            key: key,
-            index: controller.editingIndex,
-          );
-          controller.insertElementAt(controller.elementCount, element);
-        });
+    if (element != null) {
+      controller.insertElement(controller.elementCount, element);
     }
   }
 
-  void onColorSelect(Color color) {
-    final element = controller.currentElement;
+  void onValueChanged() {
+    setState(() {});
 
-    if (element is ParagraphNoteElement) {
-      final state = (element.key.currentState as ParagraphCompositeNodeState);
-      state.onColorChange(color);
-    }
-  }
-
-  void onTextStyleSelect(ElementTextStyle style) {
-    final element = controller.currentElement;
-
-    if (element is ParagraphNoteElement) {
-      final state = (element.key.currentState as ParagraphCompositeNodeState);
-      state.onStyleChange(style);
+    for (var element in controller.elements) {
+      debugPrint(element.toString());
     }
   }
 }

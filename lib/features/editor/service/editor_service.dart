@@ -1,6 +1,6 @@
 import 'package:brill_app/features/editor/model/note.dart';
 
-class EditorService {
+class NoteService {
   Future<Note> loadNote() {
     throw Exception("Uninplemented function");
   }

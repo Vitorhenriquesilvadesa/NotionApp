@@ -1,8 +1,7 @@
-import 'package:brill_app/features/editor/model/element_text_style.dart';
 import 'package:brill_app/features/editor/utils/code_lexer.dart';
 import 'package:flutter/material.dart';
 
-enum ElementTag { h1, h2, h3, h4, h5, h6, normal, title }
+enum ElementTag { h1, h2, h3, h4, h5, h6, normal, title, monospace, citation }
 
 class CodeHighlightStyles {
   static const lineHeight = 1.4;
@@ -92,17 +91,6 @@ class CodeHighlightStyles {
   };
 }
 
-class ElementTextStyles {
-  static const styles = {
-    ElementTextStyle.code: AppTextStyles.codeField,
-    ElementTextStyle.monospace: AppTextStyles.codeField,
-    ElementTextStyle.normal: AppTextStyles.normal,
-    ElementTextStyle.title1: AppTextStyles.h1,
-    ElementTextStyle.title2: AppTextStyles.h2,
-    ElementTextStyle.citation: AppTextStyles.citation,
-  };
-}
-
 class AppTextStyles {
   static const Map<ElementTag, TextStyle> styles = {
     ElementTag.h1: h1,
@@ -113,6 +101,8 @@ class AppTextStyles {
     ElementTag.h6: h6,
     ElementTag.normal: normal,
     ElementTag.title: pageTitle,
+    ElementTag.citation: citation,
+    ElementTag.monospace: codeField,
   };
 
   static const codeField = TextStyle(
