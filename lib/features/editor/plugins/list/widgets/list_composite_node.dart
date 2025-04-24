@@ -26,7 +26,6 @@ class ListCompositeNodeState extends TextCompositeNodeState<ListCompositeNode> {
         children: [
           Container(
             color: Colors.white.withAlpha(50),
-            padding: EdgeInsets.all(10),
             child: Row(
               children: [
                 OptionSelector<ListType>(
@@ -57,7 +56,14 @@ class ListCompositeNodeState extends TextCompositeNodeState<ListCompositeNode> {
                   onPressed: () {
                     listController.elements.insert(
                       listController.elementCount,
-                      BulletedListItem(label: ""),
+                      listController.type.value == ListType.dots
+                          ? BulletedListItem(label: '')
+                          : listController.type.value == ListType.numbers
+                          ? EnumeratedListItem(
+                            index: listController.elementCount,
+                            label: '',
+                          )
+                          : TodoListItem(done: false, label: ''),
                     );
                   },
                   icon: Icon(Icons.add),

@@ -1,4 +1,5 @@
 import 'package:brill_app/core/metrics/sizes.dart';
+import 'package:brill_app/core/styles/text_styles.dart';
 import 'package:brill_app/core/theme/colors.dart';
 import 'package:brill_app/features/editor/controller/editor_controller.dart';
 import 'package:brill_app/features/editor/model/action_type.dart';
@@ -98,41 +99,47 @@ class EditorNoteSpace extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(width: 50),
-                    OptionSelector<BlockType>(
-                      icon: Icons.notes,
-                      tooltip: "Inserir bloco",
-                      defaultValue: BlockType.paragraph,
-                      onSelect: onNodeInsert,
-                      options: [
-                        Option(
+                    Row(
+                      children: [
+                        Text("Inserir", style: AppTextStyles.h6),
+                        SizedBox(width: 10),
+                        OptionSelector<BlockType>(
                           icon: Icons.notes,
-                          label: "Parágrafo",
-                          value: BlockType.paragraph,
-                        ),
-                        Option(
-                          icon: Icons.notes,
-                          label: "Mapa Mental",
-                          value: BlockType.mentalMap,
-                        ),
-                        Option(
-                          icon: Icons.table_chart,
-                          label: "Tabela",
-                          value: BlockType.table,
-                        ),
-                        Option(
-                          icon: Icons.list,
-                          label: "Lista",
-                          value: BlockType.list,
-                        ),
-                        Option(
-                          icon: Icons.horizontal_rule,
-                          label: "Separador",
-                          value: BlockType.separator,
-                        ),
-                        Option(
-                          icon: Icons.code,
-                          label: "Código",
-                          value: BlockType.code,
+                          tooltip: "Inserir bloco",
+                          defaultValue: BlockType.paragraph,
+                          onSelect: onNodeInsert,
+                          options: [
+                            Option(
+                              icon: Icons.notes,
+                              label: "Parágrafo",
+                              value: BlockType.paragraph,
+                            ),
+                            Option(
+                              icon: Icons.notes,
+                              label: "Mapa Mental",
+                              value: BlockType.mentalMap,
+                            ),
+                            Option(
+                              icon: Icons.table_chart,
+                              label: "Tabela",
+                              value: BlockType.table,
+                            ),
+                            Option(
+                              icon: Icons.list,
+                              label: "Lista",
+                              value: BlockType.list,
+                            ),
+                            Option(
+                              icon: Icons.horizontal_rule,
+                              label: "Separador",
+                              value: BlockType.separator,
+                            ),
+                            Option(
+                              icon: Icons.code,
+                              label: "Código",
+                              value: BlockType.code,
+                            ),
+                          ],
                         ),
                       ],
                     ),

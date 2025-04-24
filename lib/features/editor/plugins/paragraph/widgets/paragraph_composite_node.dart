@@ -27,10 +27,6 @@ class ParagraphCompositeNodeState
   late final FocusNode focusNode;
   late final ParagraphController paragraphController;
 
-  Color color = Colors.white;
-  TextStyle style = AppTextStyles.normal;
-  TextAlign align = TextAlign.left;
-
   @override
   void initState() {
     super.initState();
@@ -38,8 +34,8 @@ class ParagraphCompositeNodeState
     focusNode = FocusNode();
     paragraphController = ParagraphController(
       textEditingController: textController,
-      align: align,
-      color: color,
+      align: widget.element.alignment,
+      color: widget.element.color,
     );
 
     paragraphController.addListener(onValueChange);

@@ -44,7 +44,7 @@ class CodeCompositeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
         Container(
           width: double.infinity,
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.all(10),
+          // padding: EdgeInsets.all(10),
           color: Colors.white.withAlpha(50),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,6 +119,7 @@ class CodeCompositeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
     List<Widget> line = [];
 
     int currentLine = 1;
+    int index = 0;
 
     for (var token in tokens) {
       if (token.type != TokenType.newLine) {
@@ -126,15 +127,27 @@ class CodeCompositeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
           line.add(Text(" ", style: CodeHighlightStyles.eof));
         } else {
           if (token.type == TokenType.identifier) {
-            line.add(
-              Text(
-                token.lexeme,
-                style:
-                    _isLowercase(token.lexeme[0])
-                        ? CodeHighlightStyles.identifier
-                        : CodeHighlightStyles.type,
-              ),
-            );
+            if (tokens[index + 1].lexeme == "(") {
+              line.add(
+                Text(
+                  token.lexeme,
+                  style:
+                      _isLowercase(token.lexeme[0])
+                          ? CodeHighlightStyles.identifier
+                          : CodeHighlightStyles.type,
+                ),
+              );
+            } else {
+              line.add(
+                Text(
+                  token.lexeme,
+                  style:
+                      _isLowercase(token.lexeme[0])
+                          ? CodeHighlightStyles.variable
+                          : CodeHighlightStyles.type,
+                ),
+              );
+            }
           } else {
             line.add(
               Text(
@@ -149,6 +162,7 @@ class CodeCompositeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
         line.insert(
           0,
           SizedBox(
+            width: 40,
             child: Text(currentLine.toString(), style: CodeHighlightStyles.eof),
           ),
         );
@@ -157,6 +171,7 @@ class CodeCompositeNodeState extends TextCompositeNodeState<CodeCompositeNode> {
         lines.add(Row(children: line));
         line = [];
       }
+      index++;
     }
 
     if (line.isNotEmpty) {

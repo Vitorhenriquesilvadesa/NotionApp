@@ -23,6 +23,14 @@ class CodeHighlightStyles {
     height: lineHeight,
   );
 
+  static const variable = TextStyle(
+    fontFamily: "JetBrains Mono",
+    fontSize: fontSize,
+    fontWeight: FontWeight.normal,
+    color: Color.fromARGB(255, 228, 107, 129),
+    height: lineHeight,
+  );
+
   static const type = TextStyle(
     fontFamily: "JetBrains Mono",
     fontSize: fontSize,

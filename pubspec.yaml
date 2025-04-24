@@ -11,9 +11,6 @@ dependencies:
     sdk: flutter
   flutter_math_fork: ^0.7.2
   get: ^4.7.2
-  node_editor: ^0.0.5
-  percent_indicator: ^4.2.5
-  scrollable_positioned_list: ^0.3.8
   uuid: ^4.5.1
 
 dev_dependencies:
@@ -23,6 +20,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/auth_bg.png
 
   fonts:
     - family: Roboto
