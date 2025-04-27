@@ -29,7 +29,7 @@ class ListCompositeNodeState extends TextCompositeNodeState<ListCompositeNode> {
             child: Row(
               children: [
                 OptionSelector<ListType>(
-                  icon: Icons.format_list_bulleted,
+                  icon: Icon(Icons.format_list_bulleted),
                   tooltip: "Tipo da lista",
                   defaultValue: ListType.dots,
                   onSelect: onListTypeChange,

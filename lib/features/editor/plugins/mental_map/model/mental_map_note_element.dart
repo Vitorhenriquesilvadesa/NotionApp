@@ -18,8 +18,11 @@ class MentalMapConnection {
 }
 
 class MentalMapNoteElement extends NoteElement {
-  MentalMapNoteElement({required this.nodes})
-    : super(type: BlockType.mentalMap);
+  MentalMapNoteElement({
+    required super.noteId,
+    required super.orderKey,
+    required this.nodes,
+  }) : super(type: BlockType.mentalMap);
 
   List<MentalMapNode> nodes;
   final List<MentalMapConnection> connections = [];

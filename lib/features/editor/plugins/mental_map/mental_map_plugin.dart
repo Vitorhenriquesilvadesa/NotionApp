@@ -1,5 +1,4 @@
 import 'package:brill_app/features/editor/plugins/mental_map/model/mental_map_note_element.dart';
-import 'package:brill_app/features/editor/model/note_element.dart';
 import 'package:brill_app/features/editor/plugins/shared/note_element_plugin.dart';
 import 'package:brill_app/features/editor/plugins/shared/block_type.dart';
 import 'package:brill_app/features/editor/plugins/shared/abstract_text_node.dart';
@@ -7,8 +6,8 @@ import 'package:brill_app/features/editor/plugins/mental_map/widgets/mental_map_
 
 class MentalMapPlugin extends NoteElementPlugin<MentalMapNoteElement> {
   @override
-  MentalMapNoteElement createElement() {
-    return MentalMapNoteElement(nodes: []);
+  MentalMapNoteElement createElement(int noteId, String orderKey) {
+    return MentalMapNoteElement(noteId: noteId, orderKey: orderKey, nodes: []);
   }
 
   @override

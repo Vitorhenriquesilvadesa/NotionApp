@@ -5,7 +5,7 @@ import 'package:brill_app/features/editor/plugins/shared/abstract_text_node.dart
 abstract class NoteElementPlugin<T extends NoteElement> {
   BlockType get type;
 
-  T createElement();
+  T createElement(int noteId, String orderKey);
   TextCompositeNode<T> createWidget(T element);
   Map<String, dynamic> serialize(T element);
   T deserialize(Map<String, dynamic> json);

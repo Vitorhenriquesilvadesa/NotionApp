@@ -4,29 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class PageTitle extends StatefulWidget {
-  const PageTitle({super.key, this.onSubmitted});
+  const PageTitle({
+    super.key,
+    this.onSubmitted,
+    required this.controller,
+    required this.onChange,
+  });
 
+  final void Function(String) onChange;
   final void Function(String)? onSubmitted;
+  final TextEditingController controller;
 
   @override
   State<PageTitle> createState() => _PageTitleState();
 }
 
 class _PageTitleState extends State<PageTitle> {
-  late TextEditingController _controller;
   late FocusNode _focusNode;
   bool _hovering = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
     _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -34,7 +38,7 @@ class _PageTitleState extends State<PageTitle> {
   void _onKey(KeyEvent event) {
     if (event.logicalKey == LogicalKeyboardKey.enter) {
       if (widget.onSubmitted != null) {
-        widget.onSubmitted!(_controller.text);
+        widget.onSubmitted!(widget.controller.text);
       }
       _focusNode.unfocus();
     }
@@ -66,7 +70,8 @@ class _PageTitleState extends State<PageTitle> {
           onKeyEvent: _onKey,
           child: Container(
             child: TextField(
-              controller: _controller,
+              onChanged: widget.onChange,
+              controller: widget.controller,
               maxLines: null,
               cursorHeight: 48,
               cursorWidth: 3,

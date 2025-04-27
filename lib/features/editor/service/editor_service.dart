@@ -1,15 +1,15 @@
 import 'package:brill_app/features/editor/model/note.dart';
 
 class NoteService {
-  Future<Note> loadNote() {
+  Future<Note> loadNote() async {
     throw Exception("Uninplemented function");
   }
 
-  Future<void> saveNote() {
+  Future<void> saveNote(Note note) async {
     throw Exception("Uninplemented function");
   }
 
-  Future<void> deleteNote() {
+  Future<void> deleteNote() async {
     throw Exception("Uninplemented function");
   }
 }

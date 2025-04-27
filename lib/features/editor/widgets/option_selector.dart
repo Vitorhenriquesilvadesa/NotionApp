@@ -12,7 +12,7 @@ class Option<T> {
 class OptionSelector<T> extends StatefulWidget {
   final List<Option<T>> options;
   final T defaultValue;
-  final IconData icon;
+  final Widget? icon;
   final String? tooltip;
   final void Function(T option) onSelect;
   final double? maxMenuHeight;
@@ -21,7 +21,7 @@ class OptionSelector<T> extends StatefulWidget {
     super.key,
     required this.options,
     required this.defaultValue,
-    required this.icon,
+    this.icon,
     this.tooltip,
     this.maxMenuHeight,
     required this.onSelect,
@@ -56,7 +56,10 @@ class _OptionSelectorState<T> extends State<OptionSelector<T>> {
       ),
       tooltip: widget.tooltip,
       icon: Row(
-        children: [Icon(widget.icon), const Icon(Icons.arrow_drop_down)],
+        children: [
+          if (widget.icon != null) widget.icon!,
+          const Icon(Icons.arrow_drop_down),
+        ],
       ),
       initialValue: _selectedOption,
       onSelected: (T value) {

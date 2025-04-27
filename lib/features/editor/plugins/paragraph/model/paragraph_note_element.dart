@@ -12,12 +12,21 @@ class ParagraphNoteElement extends NoteElement {
   ParagraphNoteElement({
     required this.color,
     required this.text,
+    required super.noteId,
+    required super.orderKey,
     this.tag = ElementTag.h5,
     this.alignment = TextAlign.left,
   }) : super(type: BlockType.paragraph);
 
   factory ParagraphNoteElement.fromJson(Map<String, dynamic> json) {
-    return ParagraphNoteElement(color: json['color'], text: json['text']);
+    return ParagraphNoteElement(
+      noteId: json['noteId'],
+      orderKey: json['orderKey'],
+      alignment: json['alignment'],
+      tag: json['tag'],
+      color: json['color'],
+      text: json['text'],
+    );
   }
 
   @override

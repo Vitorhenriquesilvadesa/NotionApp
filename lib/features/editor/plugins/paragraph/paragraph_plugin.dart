@@ -11,8 +11,10 @@ class ParagraphPlugin implements NoteElementPlugin<ParagraphNoteElement> {
   BlockType get type => BlockType.paragraph;
 
   @override
-  ParagraphNoteElement createElement() {
+  ParagraphNoteElement createElement(int noteId, String orderKey) {
     return ParagraphNoteElement(
+      noteId: noteId,
+      orderKey: orderKey,
       text: '',
       color: Colors.white,
       alignment: TextAlign.left,

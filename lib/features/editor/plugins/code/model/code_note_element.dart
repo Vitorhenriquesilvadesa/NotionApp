@@ -5,17 +5,31 @@ class CodeNoteElement extends NoteElement {
   String language;
   String source;
 
-  CodeNoteElement({required this.source, required this.language})
-    : super(type: BlockType.code);
+  CodeNoteElement({
+    required super.noteId,
+    required super.orderKey,
+    required this.source,
+    required this.language,
+  }) : super(type: BlockType.code);
 
   @override
   Map<String, dynamic> toJson() {
-    // TODO: implement toJson
-    throw UnimplementedError();
+    return {
+      'content': {'source': source, 'language': language},
+    };
   }
 
   @override
   String toString() {
     return "Code {$language | $source}";
+  }
+
+  factory CodeNoteElement.fromJson(Map<String, dynamic> json) {
+    return CodeNoteElement(
+      orderKey: json['orderKey'],
+      noteId: json['noteId'],
+      source: json['source'],
+      language: json['language'],
+    );
   }
 }

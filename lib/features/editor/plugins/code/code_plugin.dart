@@ -6,8 +6,13 @@ import 'package:brill_app/features/editor/plugins/code/widgets/code_composite_no
 
 class CodePlugin extends NoteElementPlugin<CodeNoteElement> {
   @override
-  CodeNoteElement createElement() {
-    return CodeNoteElement(language: "java", source: "");
+  CodeNoteElement createElement(int noteId, String orderKey) {
+    return CodeNoteElement(
+      orderKey: orderKey,
+      noteId: noteId,
+      language: "python",
+      source: "",
+    );
   }
 
   @override
@@ -17,14 +22,12 @@ class CodePlugin extends NoteElementPlugin<CodeNoteElement> {
 
   @override
   CodeNoteElement deserialize(Map<String, dynamic> json) {
-    // TODO: implement deserialize
-    throw UnimplementedError();
+    return CodeNoteElement.fromJson(json);
   }
 
   @override
   Map<String, dynamic> serialize(CodeNoteElement element) {
-    // TODO: implement serialize
-    throw UnimplementedError();
+    return element.toJson();
   }
 
   @override

@@ -79,7 +79,7 @@ class ParagraphCompositeNodeState
       child: Row(
         children: [
           OptionSelector<ElementTag>(
-            icon: Icons.text_fields,
+            icon: Icon(Icons.text_fields),
             tooltip: "Estilo do texto",
             defaultValue: ElementTag.normal,
             onSelect: onTagSelect,
@@ -118,7 +118,7 @@ class ParagraphCompositeNodeState
           ),
           const SizedBox(width: 20),
           OptionSelector<Color>(
-            icon: Icons.format_color_text,
+            icon: Icon(Icons.format_color_text),
             tooltip: "Cor do texto",
             defaultValue: Colors.white,
             onSelect: onColorSelect,
@@ -137,7 +137,7 @@ class ParagraphCompositeNodeState
           ),
           const SizedBox(width: 20),
           OptionSelector<TextAlign>(
-            icon: Icons.format_align_left,
+            icon: Icon(Icons.format_align_left),
             tooltip: "Alinhamento do texto",
             defaultValue: TextAlign.left,
             onSelect: onTextAlign,

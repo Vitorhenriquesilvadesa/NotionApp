@@ -6,8 +6,8 @@ import 'package:brill_app/features/editor/plugins/shared/note_element_plugin.dar
 
 class ListPlugin extends NoteElementPlugin<ListNoteElement> {
   @override
-  ListNoteElement createElement() {
-    return ListNoteElement(items: []);
+  ListNoteElement createElement(int noteId, String orderKey) {
+    return ListNoteElement(noteId: noteId, orderKey: orderKey, items: []);
   }
 
   @override

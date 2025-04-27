@@ -103,7 +103,6 @@ class _TextElementState extends State<TextElement> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: child),
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 150),
                 opacity: _hovering ? 1.0 : 0.25,
@@ -118,6 +117,7 @@ class _TextElementState extends State<TextElement> {
                   ),
                 ),
               ),
+              Expanded(child: child),
             ],
           ),
         ),

@@ -5,7 +5,11 @@ import 'package:brill_app/features/editor/plugins/shared/block_type.dart';
 class ListNoteElement extends NoteElement {
   final List<ListItem> items;
 
-  ListNoteElement({required this.items}) : super(type: BlockType.list);
+  ListNoteElement({
+    required super.noteId,
+    required super.orderKey,
+    required this.items,
+  }) : super(type: BlockType.list);
 
   @override
   Map<String, dynamic> toJson() {
